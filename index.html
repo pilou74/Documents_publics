@@ -42,7 +42,7 @@
     .unknown { color: var(--grey); background: var(--grey-bg); }
     .notice { margin: 22px 0 0; border: 1px solid #ddd6fe; background: rgba(255,255,255,.72); border-radius: 14px; padding: 13px 15px; color: #4a3c86; font-size: .86rem; line-height: 1.5; }
     .toolbar-shell { position: sticky; top: 0; z-index: 10; padding: 12px 0; background: rgba(251,250,247,.86); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(230,232,236,.8); }
-    .toolbar { display: grid; grid-template-columns: 1.45fr repeat(3, minmax(145px, .65fr)); gap: 10px; }
+    .toolbar { display: grid; grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(150px, .7fr)); gap: 10px; }
     input, select { width: 100%; border: 1px solid #d7dae0; border-radius: 12px; background: white; color: var(--ink); padding: 12px 13px; font: inherit; font-size: .9rem; outline: none; }
     input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,63,212,.12); }
     .summary { display: flex; flex-wrap: wrap; gap: 10px; padding: 24px 0 8px; }
@@ -81,9 +81,9 @@
 </head>
 <body>
   <header class="wrap">
-    <div class="eyebrow">Sélection danse 2026-2027</div>
-    <h1>54 spectacles à regarder depuis Puteaux</h1>
-    <p class="intro">La liste reprend toutes les lignes du document fourni. La distance est évaluée depuis la mairie de Puteaux. L'âge reste gris lorsqu'aucune recommandation vérifiable n'a été trouvée.</p>
+    <div class="eyebrow">Sélection spectacles 2026-2027</div>
+    <h1>64 spectacles à regarder depuis Puteaux</h1>
+    <p class="intro">La liste reprend les 54 lignes du document fourni et les 10 spectacles annoncés au Théâtre de Puteaux. La distance est évaluée depuis la mairie de Puteaux. L'âge reste gris lorsqu'aucune recommandation vérifiable n'a été trouvée.</p>
     <div class="legend" aria-label="Légende">
       <span class="good"><i class="dot"></i>Compatible / moins de 30 min</span>
       <span class="bad"><i class="dot"></i>Trop jeune / plus de 30 min</span>
@@ -95,6 +95,9 @@
   <div class="toolbar-shell">
     <div class="toolbar wrap">
       <input id="q" type="search" placeholder="Rechercher un spectacle, un artiste ou un lieu…" aria-label="Rechercher">
+      <select id="venue" aria-label="Filtrer par lieu">
+        <option value="all">Tous les lieux</option>
+      </select>
       <select id="distance" aria-label="Filtrer par trajet">
         <option value="all">Tous les trajets</option>
         <option value="good">Moins de 30 min</option>
@@ -121,7 +124,7 @@
   </main>
 
   <footer class="wrap">
-    Vérifications effectuées le 11 septembre 2026. Les dates affichées reprennent le PDF, sauf l'erreur manifeste signalée sur <em>Midsummer Night's Dream</em>. Les programmations pouvant évoluer, vérifier la fiche officielle avant réservation.
+    Vérifications effectuées les 11 et 13 septembre 2026. Les dates initiales reprennent le PDF, sauf l'erreur manifeste signalée sur <em>Midsummer Night's Dream</em>. La programmation du Théâtre de Puteaux provient des fiches officielles de la Ville. Les programmations pouvant évoluer, vérifier la fiche officielle avant réservation.
   </footer>
 
   <script>
@@ -141,6 +144,7 @@
       "Dôme de Paris - Palais des Sports": { travel:"≈ 25-40 min", ds:"unknown", dest:"Dôme de Paris Palais des Sports, 34 Boulevard Victor, Paris", url:"https://www.ledomedeparis.com/" },
       "Théâtre de la Ville - Sarah Bernhardt": { travel:"≈ 25-40 min", ds:"unknown", dest:"Théâtre de la Ville Sarah Bernhardt, 2 Place du Châtelet, Paris", url:"https://www.theatredelaville-paris.com/" },
       "Théâtre des Champs-Élysées": { travel:"≈ 15-25 min", ds:"good", dest:"Théâtre des Champs-Élysées, 15 Avenue Montaigne, Paris", url:"https://www.theatrechampselysees.fr/" }
+      ,"Théâtre de Puteaux": { travel:"≈ 3-5 min", ds:"good", dest:"Théâtre de Puteaux, 5 Rue Henri Martin, 92800 Puteaux", url:"https://www.puteaux.fr/culture/offre-culturelle/theatre-de-puteaux/" }
     };
 
     const age = {
@@ -159,6 +163,10 @@
       roiSoleil: { label:"Plutôt dès 7-8 ans", s:"bad", source:"https://www.magicmaman.com/a-quel-age-emmener-mon-enfant-voir-la-comedie-musicale-le-roi-soleil,3778479.asp" },
       secret: { label:"Dès 6 ans", s:"bad", source:"https://theatre-chaillot.fr/fr/programmation/2025-2026/chaillot-experience-kids" },
       cacti: { label:"Dès 13 ans / thèmes adultes", s:"bad", source:"https://www.yale.boston/events/boston-ballet-fall-experience" }
+      ,petitPrincePuteaux: { label:"Dès 7 ans", s:"bad", source:"https://www.puteaux.fr/evenements/le-petit-prince/" }
+      ,mulanPuteaux: { label:"Dès 5 ans", s:"bad", source:"https://www.puteaux.fr/evenements/mulan/" }
+      ,arsenePuteaux: { label:"Dès 6 ans", s:"bad", source:"https://www.puteaux.fr/evenements/arsene-lupin/" }
+      ,medecinPuteaux: { label:"Dès 6 ans", s:"bad", source:"https://www.puteaux.fr/evenements/le-medecin-malgre-lui/" }
     };
 
     const S = (title, venue, date, sort, artist="", a=age.unknown, source="", note="") => ({title, venue, date, sort, artist, a, source, note});
@@ -217,6 +225,16 @@
       S("Midsummer Night's Dream","Théâtre des Champs-Élysées","22 et 23 avril 2027","2027-04-22","The Joffrey Ballet - Alexander Ekman",age.unknown,"https://www.theatrechampselysees.fr/saison-2026-2027","Le PDF indique 2026, mais le calendrier officiel de la saison confirme les 22 et 23 avril 2027."),
       S("Les 4 Saisons dansées","Théâtre des Champs-Élysées","10 au 13 mai 2027","2027-05-10","Mourad Merzouki, Julien Chauvin"),
       S("Arc-en-ciel / Celebrating Kylián","Théâtre des Champs-Élysées","30 juin au 3 juillet 2027","2027-06-30","Ballet national de Norvège - Jiří Kylián")
+      ,S("Amis pour la vie","Théâtre de Puteaux","24 février 2027 à 20h30","2027-02-24","Davy Sardou, Alysson Paradis, Marie-Ange Casta, Julien Personnaz",age.unknown,"https://www.puteaux.fr/evenements/amis-pour-la-vie/")
+      ,S("Le Petit Prince","Théâtre de Puteaux","3 mars 2027 à 19h30","2027-03-03","Hoël Le Corre",age.petitPrincePuteaux,"https://www.puteaux.fr/evenements/le-petit-prince/")
+      ,S("Les Rochambelles","Théâtre de Puteaux","8 mars 2027 à 20h30","2027-03-08","Valérie Demay, mise en scène Merryl Beaudonnet et Charlotte Bigeard",age.unknown,"https://www.puteaux.fr/evenements/les-rochambelles/")
+      ,S("Sotto Voce Swing'in Puteaux","Théâtre de Puteaux","13 mars 2027 à 18h","2027-03-13","Chœur d'enfants Sotto Voce",age.unknown,"https://www.puteaux.fr/evenements/sotto-voce-swingin-puteaux/")
+      ,S("Les aventuriers de minuit","Théâtre de Puteaux","18 mars 2027 à 20h30","2027-03-18","Comédie policière de Julien et Florence Lefebvre",age.unknown,"https://www.puteaux.fr/evenements/les-aventuriers-de-minuit/")
+      ,S("Mulan","Théâtre de Puteaux","20 mars 2027 à 19h30","2027-03-20","Hélia Naji, Yassine Ben, Chelsee Gunputh",age.mulanPuteaux,"https://www.puteaux.fr/evenements/mulan/")
+      ,S("L'âge libre","Théâtre de Puteaux","31 mars 2027 à 20h30","2027-03-31","Anne Roumanoff",age.unknown,"https://www.puteaux.fr/evenements/lage-libre-anne-roumanoff/")
+      ,S("Marius","Théâtre de Puteaux","20 avril 2027 à 20h30","2027-04-20","Marcel Pagnol, mise en scène Jean-Philippe Daguerre",age.unknown,"https://www.puteaux.fr/evenements/marius/")
+      ,S("Arsène Lupin","Théâtre de Puteaux","24 avril 2027 à 19h30","2027-04-24","Mise en scène Nicolas Nebot",age.arsenePuteaux,"https://www.puteaux.fr/evenements/arsene-lupin/")
+      ,S("Le médecin malgré lui","Théâtre de Puteaux","29 avril 2027 à 19h30","2027-04-29","Molière, mise en scène Charlotte Matzneff",age.medecinPuteaux,"https://www.puteaux.fr/evenements/le-medecin-malgre-lui/")
     ];
 
     const $ = s => document.querySelector(s);
@@ -226,13 +244,14 @@
 
     function render() {
       const query = norm($("#q").value.trim());
+      const vf = $("#venue").value;
       const df = $("#distance").value;
       const af = $("#age").value;
       const sort = $("#sort").value;
       let list = shows.filter(x => {
         const v = venueInfo[x.venue];
         const hay = norm([x.title,x.venue,x.artist,x.date].join(" "));
-        return (!query || hay.includes(query)) && (df === "all" || v.ds === df) && (af === "all" || x.a.s === af);
+        return (!query || hay.includes(query)) && (vf === "all" || x.venue === vf) && (df === "all" || v.ds === df) && (af === "all" || x.a.s === af);
       });
       list.sort((a,b) => sort === "date" ? a.sort.localeCompare(b.sort) || a.title.localeCompare(b.title,"fr") : (sort === "venue" ? a.venue.localeCompare(b.venue,"fr") : a.title.localeCompare(b.title,"fr")));
 
@@ -265,7 +284,10 @@
         </article>`;
       }).join("") : `<div class="empty">Aucun spectacle ne correspond à ces filtres.</div>`;
     }
-    ["q","distance","age","sort"].forEach(id => $("#"+id).addEventListener(id === "q" ? "input" : "change", render));
+    [...new Set(shows.map(x => x.venue))]
+      .sort((a,b) => a.localeCompare(b,"fr"))
+      .forEach(venue => $("#venue").add(new Option(venue, venue)));
+    ["q","venue","distance","age","sort"].forEach(id => $("#"+id).addEventListener(id === "q" ? "input" : "change", render));
     render();
   </script>
 </body>
